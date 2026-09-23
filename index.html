@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chennai Community Health Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#132623;
+    --paper:#F6F3EC;
+    --teal:#1F4E4A;
+    --teal-deep:#0F2E2B;
+    --sage:#8FB09E;
+    --amber:#D98A3D;
+    --line:#132623;
+    --card:#EFEAE0;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  h1,h2,.num{font-family:'Fraunces',serif;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  header{
+    background:var(--teal-deep);
+    color:var(--paper);
+    padding:64px 0 56px;
+  }
+  header .tag{
+    font-size:14px;letter-spacing:.02em;color:var(--sage);margin:0 0 14px;
+  }
+  header h1{
+    font-size:clamp(32px,5vw,52px);font-weight:500;line-height:1.08;margin:0 0 18px;max-width:680px;
+  }
+  header p{font-size:17px;line-height:1.6;max-width:560px;color:#D9E4DE;margin:0;}
+  header .meta{margin-top:36px;display:flex;gap:32px;flex-wrap:wrap;font-size:14px;color:#B9CBC3;}
+  .hero-stats{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .hero-stats div{padding:28px 24px;border-right:1px solid var(--line);}
+  .hero-stats div:last-child{border-right:none;}
+  .hero-stats .num{font-size:34px;font-weight:500;line-height:1;}
+  .hero-stats .lbl{font-size:13px;color:#5b6b65;margin-top:8px;line-height:1.4;}
+  section{padding:48px 0;border-bottom:1px solid rgba(19,38,35,.12);}
+  section h2{font-size:24px;font-weight:500;margin:0 0 6px;}
+  section .sub{font-size:14px;color:#5b6b65;margin:0 0 28px;}
+  .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}.hero-stats div{border-right:none;border-bottom:1px solid var(--line);}}
+  .bar-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+  .bar-label{width:150px;font-size:13px;flex-shrink:0;}
+  .bar-track{flex:1;background:rgba(19,38,35,.08);height:22px;position:relative;}
+  .bar-fill{background:var(--teal);height:100%;}
+  .bar-fill.amber{background:var(--amber);}
+  .bar-val{width:44px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums;flex-shrink:0;}
+  .donut-wrap{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
+  .legend{font-size:13px;display:flex;flex-direction:column;gap:8px;}
+  .legend span{display:inline-block;width:10px;height:10px;margin-right:8px;border-radius:2px;vertical-align:middle;}
+  .risk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);}
+  .risk-grid div{background:var(--card);padding:22px;}
+  .risk-grid .n{font-size:28px;font-family:'Fraunces',serif;font-weight:500;}
+  .risk-grid .l{font-size:12.5px;color:#5b6b65;margin-top:4px;}
+  footer{padding:32px 0 56px;font-size:13px;color:#5b6b65;}
+  footer a{color:var(--teal);}
+  .note{font-size:13px;color:#5b6b65;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="tag">Community Health Data Collection &amp; Analysis</p>
+    <h1>A ward-by-ward look at how 420 residents are actually doing.</h1>
+    <p>Survey data collected across six wards in Chennai covering BMI, blood pressure, chronic conditions, sleep, activity and lifestyle — rolled into a single wellness picture per ward.</p>
+    <div class="meta">
+      <span>420 respondents</span>
+      <span>6 wards</span>
+      <span>May–Jul 2026</span>
+    </div>
+  </div>
+  <div class="hero-stats wrap" style="margin-top:44px;padding:0;max-width:1080px;">
+    <div><div class="num">84.6</div><div class="lbl">Avg. wellness score /100</div></div>
+    <div><div class="num">41.7</div><div class="lbl">Average age (yrs)</div></div>
+    <div><div class="num">6.6h</div><div class="lbl">Average sleep/night</div></div>
+    <div><div class="num">31%</div><div class="lbl">Report low sleep</div></div>
+  </div>
+</header>
+
+<section class="wrap">
+  <h2>Wellness score by ward</h2>
+  <p class="sub">Anna Nagar leads; Tambaram trails — a 6.2 point spread across the city</p>
+  <div id="wardBars"></div>
+</section>
+
+<section class="wrap">
+  <div class="grid2">
+    <div>
+      <h2>Overall health status</h2>
+      <p class="sub">Self- and metric-derived status across all respondents</p>
+      <div id="healthBars"></div>
+    </div>
+    <div>
+      <h2>BMI category</h2>
+      <p class="sub">Share of respondents in each band</p>
+      <div id="bmiBars"></div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>Risk factors</h2>
+  <p class="sub">Count of respondents flagged, out of 420 total</p>
+  <div class="risk-grid">
+    <div><div class="n">68</div><div class="l">Diabetes</div></div>
+    <div><div class="n">45</div><div class="l">Heart disease</div></div>
+    <div><div class="n">89</div><div class="l">Current smokers</div></div>
+    <div><div class="n">130</div><div class="l">Low sleep flag</div></div>
+    <div><div class="n">163</div><div class="l">Low physical activity</div></div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <p>Built from <code>final_dataset__2_.xlsx</code> (420 records, 17 fields) and the accompanying Power BI report. This page is a static, browsable summary of the same dataset — the full interactive .pbix file is in the repo for the complete drill-down experience in Power BI Desktop.</p>
+</footer>
+
+<script>
+const wardData = [
+  ["Ward 1 - Anna Nagar", 88.1],
+  ["Ward 2 - T Nagar", 85.2],
+  ["Ward 4 - Velachery", 84.9],
+  ["Ward 5 - Perambur", 83.9],
+  ["Ward 3 - Adyar", 82.8],
+  ["Ward 6 - Tambaram", 81.9]
+];
+const healthData = [["Excellent",150],["Fair",138],["Good",105],["Poor",27]];
+const bmiData = [["Overweight",164],["Normal",156],["Obese",74],["Underweight",26]];
+
+function renderBars(containerId, data, max, amber){
+  const el = document.getElementById(containerId);
+  data.forEach(([label,val])=>{
+    const pct = (val/max*100).toFixed(1);
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = `<div class="bar-label">${label}</div><div class="bar-track"><div class="bar-fill${amber?' amber':''}" style="width:${pct}%"></div></div><div class="bar-val">${val}</div>`;
+    el.appendChild(row);
+  });
+}
+renderBars('wardBars', wardData, 90);
+renderBars('healthBars', healthData, 160);
+renderBars('bmiBars', bmiData, 170, true);
+</script>
+
+</body>
+</html>
